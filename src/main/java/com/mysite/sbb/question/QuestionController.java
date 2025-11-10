@@ -9,8 +9,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import com.mysite.sbb.answer.AnswerForm;
 import jakarta.validation.Valid;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.data.domain.Page;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,9 +25,9 @@ public class QuestionController {
 	private final QuestionService questionService;
 
 	@GetMapping("/list")
-    public String list(Model model) {
-    	List<Question> questionList = this.questionService.getList();
-        model.addAttribute("questionList", questionList);
+    public String list(Model model, @RequestParam(value="page", defaultValue="0")int page) {
+    	Page<Question> paging = this.questionService.getList(page);
+        model.addAttribute("paging", paging);
         return "question_list";
     }
     
@@ -34,7 +37,7 @@ public class QuestionController {
     }
 	
 	@GetMapping(value = "/detail/{id}")
-    public String detail(Model model, @PathVariable("id") Integer id) {
+    public String detail(Model model, @PathVariable("id") Integer id, AnswerForm answerForm) {
     	Question question = this.questionService.getQuestion(id);
         model.addAttribute("question", question);
         return "question_detail";
